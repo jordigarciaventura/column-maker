@@ -1,54 +1,55 @@
 {
   "name": "column-maker",
-	"displayName": "column-maker",
-	"description": "Make a column adding spaces to all selected lines since a specific width",
-  "icon":"images/icon.png",
+  "displayName": "column-maker",
+  "description": "Make a column adding spaces to all selected lines since a specific width",
+  "icon": "images/icon.png",
   "publisher": "jordigarciaventura",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.64.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-        "onCommand:column-maker.createColumn",
-        "onCommand:column-maker.setColumnWidth",
-        "onCommand:column-maker.setColumnMargin"
-	],
-	"main": "./extension.js",
-	"contributes": {
-		"commands": [{
-            "command": "column-maker.createColumn",
-            "title": "Create column",
-      "category": "column-maker"
-
-		}, {
-      "command": "column-maker.setColumnWidth",
-      "title": "Set column width",
-      "category": "column-maker"
-    },
-    {
-      "command": "column-maker.setColumnMargin",
-      "title": "Set column margin",
-      "category": "column-maker"
-    }]
-	},
-	"scripts": {
-		"lint": "eslint .",
-		"pretest": "npm run lint",
-		"test": "node ./test/runTest.js"
-	},
-	"devDependencies": {
-        "@types/vscode": "^1.64.0",
-        "@types/glob": "^7.2.0",
-        "@types/mocha": "^9.1.0",
-        "@types/node": "14.x",
-        "eslint": "^8.9.0",
-        "glob": "^7.2.0",
-        "mocha": "^9.2.1",
-        "typescript": "^4.5.5",
-        "@vscode/test-electron": "^2.1.2"
-    }
-
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.64.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:column-maker.createColumn",
+    "onCommand:column-maker.setColumnWidth",
+    "onCommand:column-maker.setColumnMargin"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "column-maker.createColumn",
+        "title": "Create column",
+        "category": "column-maker"
+      },
+      {
+        "command": "column-maker.setColumnWidth",
+        "title": "Set column width",
+        "category": "column-maker"
+      },
+      {
+        "command": "column-maker.setColumnMargin",
+        "title": "Set column margin",
+        "category": "column-maker"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.64.0",
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "14.x",
+    "eslint": "^8.9.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.2.1",
+    "typescript": "^4.5.5",
+    "@vscode/test-electron": "^2.1.2"
+  }
 }

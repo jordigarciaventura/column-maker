@@ -4,6 +4,7 @@
   "description": "Make a column adding spaces to all selected lines since a specific width",
   "icon": "images/icon.png",
   "publisher": "jordigarciaventura",
+  "repository": "https://github.com/jordigarciaventura/column-maker", 
   "version": "0.2.1",
   "engines": {
     "vscode": "^1.64.0"

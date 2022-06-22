@@ -21,17 +21,7 @@
     "commands": [
       {
         "command": "column-maker.createColumn",
-        "title": "Create column",
-        "category": "column-maker"
-      },
-      {
-        "command": "column-maker.setColumnWidth",
-        "title": "Set column width",
-        "category": "column-maker"
-      },
-      {
-        "command": "column-maker.setColumnMargin",
-        "title": "Set column margin",
+        "title": "Create Column",
         "category": "column-maker"
       }
     ]

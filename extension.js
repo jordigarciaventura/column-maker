@@ -4,76 +4,71 @@ const vscode = require("vscode");
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  let disposable = vscode.commands.registerCommand(
-    "column-maker.setColumnWidth",
-    async function () {
-      const savedWidth = context.workspaceState.get("columnWidth") || "0";
-      const width = await vscode.window.showInputBox({
-        ignoreFocusOut: false,
-        title: "Set column width",
-        value: savedWidth,
-        valueSelection: undefined,
-        validateInput: function (value) {
-          const num = Number(value);
-          if (Number.isInteger(num) && num >= 0) {
-            return "";
-          }
-          return "Enter an integer greater or equal to zero";
-        },
-      });
-      context.workspaceState.update("columnWidth", width);
-    }
-  );
-
-  context.subscriptions.push(disposable);
-
-  disposable = vscode.commands.registerCommand(
-    "column-maker.setColumnMargin",
-    async function () {
-      const savedMargin = context.workspaceState.get("columnMargin") || "8";
-      const margin = await vscode.window.showInputBox({
-        ignoreFocusOut: false,
-        title: "Set column margin",
-        value: savedMargin,
-        valueSelection: undefined,
-        validateInput: function (value) {
-          const num = Number(value);
-          if (Number.isInteger(num) && num >= 0) {
-            return "";
-          }
-          return "Enter an integer greater or equal to zero";
-        },
-      });
-      context.workspaceState.update("columnMargin", margin);
-    }
-  );
-
-  context.subscriptions.push(disposable);
-
-  disposable = vscode.commands.registerCommand(
+  const disposable = vscode.commands.registerTextEditorCommand(
     "column-maker.createColumn",
-    function () {
-      const width = parseInt(context.workspaceState.get("columnWidth")) || 0;
-      const margin = parseInt(context.workspaceState.get("columnMargin")) || 8;
+    async (textEditor, edit) => {
+      const method = await vscode.window.showQuickPick(
+        ["Fixed width", "Margin"],
+        { title: "Select a method" }
+      );
 
-      const editor = vscode.window.activeTextEditor;
+      const isFixed = method === "Fixed width";
 
-      if (editor) {
-        const document = editor.document;
-        editor.edit(async function (editBuilder) {
-          editor.selections.forEach((sel) => {
-            const range = sel.isEmpty
-              ? document.getWordRangeAtPosition(sel.start) || sel
-              : sel;
-            let text = document.getText(range);
+      const savedWidth = parseInt(context.workspaceState.get("width")) || 24;
+      const savedMargin = parseInt(context.workspaceState.get("margin")) || 8;
 
-            const maxWidth = getMaxLineWidth(text);
-            editBuilder.replace(
-              range,
-              addSpaceSinceWidth(text, Math.max(width, maxWidth + margin))
+      const input = Number(
+        await vscode.window.showInputBox({
+          ignoreFocusOut: false,
+          title: `Set ${isFixed ? "width" : "margin"}`,
+          value: isFixed ? savedWidth : savedMargin,
+          valueSelection: undefined,
+          validateInput: (value) => {
+            const num = Number(value);
+            if (Number.isInteger(num) && num >= 1) {
+              return "";
+            }
+            return "Enter a positive number";
+          },
+        })
+      );
+      context.workspaceState.update(isFixed ? "width" : "margin", input);
+
+      let longerHandlerPreference = undefined;
+
+      for (const sel of textEditor.selections) {
+        const document = textEditor.document;
+        const range = sel.isEmpty
+          ? document.getWordRangeAtPosition(sel.start) || sel
+          : sel;
+        const text = document.getText(range);
+
+        let lines = text.split(/\r?\n/);
+        const maxWidth = getMaxLineWidth(lines);
+
+        if (isFixed && maxWidth > input) {
+          if (!longerHandlerPreference)
+            longerHandlerPreference = await vscode.window.showQuickPick(
+              ["Omit", "Split with line breaks"],
+              {
+                title: `There are lines longer than ${input} characters. What do you want to do with them?`,
+              }
             );
-          });
-        });
+
+          if (longerHandlerPreference == "Split with line breaks")
+            lines = chunkLines(lines, input).flat();
+        }
+
+        await textEditor.edit((editBuilder) =>
+          editBuilder.replace(
+            range,
+            lines
+              .map((line) =>
+                fillRight(line, isFixed ? input : maxWidth + input)
+              )
+              .join("\n")
+          )
+        );
       }
     }
   );
@@ -81,21 +76,35 @@ function activate(context) {
   context.subscriptions.push(disposable);
 }
 
-function getMaxLineWidth(str) {
-  return str.split("\n").reduce((acc, curr) => Math.max(acc, curr.length), 0);
+function getMaxLineWidth(lines) {
+  return lines.reduce((acc, line) => Math.max(acc, line.length), 0);
 }
 
-function addSpaceSinceWidth(str, width) {
-  return str
-    .split("\n")
-    .map(
-      (line) =>
-        line +
-        Array(Math.max(width - line.length, 0))
-          .fill(" ")
-          .join("")
-    )
-    .join("\n");
+function chunkLines(lines, size) {
+  return lines.map((line) => chunkSubstr(line, size));
+}
+
+function chunkSubstr(str, size) {
+  if (str.length <= size) return str;
+
+  const numChunks = Math.ceil(str.length / size);
+  const chunks = new Array(numChunks);
+
+  for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+    chunks[i] = str.substr(o, size);
+  }
+
+  return chunks;
+}
+
+function fillRight(str, width) {
+  if (str.length >= width) return str;
+  return (
+    str +
+    Array(Math.max(width - str.length, 0))
+      .fill(" ")
+      .join("")
+  );
 }
 
 module.exports = {

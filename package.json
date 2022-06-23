@@ -1,11 +1,11 @@
 {
   "name": "column-maker",
   "displayName": "column-maker",
-  "description": "Make a column adding spaces to all selected lines since a specific width",
-  "icon": "images/icon.png",
+  "description": "Make a column adding spaces to all selected lines since a specific width.",
+  "icon": "media/icon.png",
   "publisher": "jordigarciaventura",
   "repository": "https://github.com/jordigarciaventura/column-maker", 
-  "version": "0.2.1",
+  "version": "0.2.2",
   "engines": {
     "vscode": "^1.64.0"
   },
@@ -13,9 +13,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:column-maker.createColumn",
-    "onCommand:column-maker.setColumnWidth",
-    "onCommand:column-maker.setColumnMargin"
+    "onCommand:column-maker.createColumn"
   ],
   "main": "./extension.js",
   "contributes": {

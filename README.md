@@ -4,6 +4,9 @@ Make a column adding spaces to all selected lines since a specific width.
 
 > 💡 Revertible using the command *Trim Trailing Whitespace*
 
+## Preview
+![Alt Text](./media/preview.gif)
+
 ## Extension Commands
 
 * `column-maker: Make Column`: make a column from the selection in two possible ways: 
